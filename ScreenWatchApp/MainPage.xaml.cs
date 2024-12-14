@@ -6,11 +6,13 @@ namespace ScreenWatchApp
     public partial class MainPage : ContentPage
     {
         private System.Timers.Timer _timer;
+        private bool _ChangingTimes;
 
         public MainPage()
         {
             InitializeComponent();
             StartTimer();
+            _ChangingTimes = true;
         }
 
         private void StartTimer()
@@ -24,13 +26,23 @@ namespace ScreenWatchApp
         {
             MainThread.BeginInvokeOnMainThread(() =>
             {
-                TimeLabel.Text = DateTime.Now.ToString("HH:mm:ss");
+                UpdateTimes();
             });
         }
 
-        private void OnUpdateTimeClicked(object sender, EventArgs e)
+        private void UpdateTimes()
         {
-            TimeLabel.Text = DateTime.Now.ToString("HH:mm:ss");
+            if (_ChangingTimes)
+            {
+                TimeLabel.Text = DateTime.Now.ToString("HH:mm");
+                _ChangingTimes = false;
+            }
+
+            else
+            {
+                TimeLabel.Text = DateTime.Now.ToString("HH mm");
+                _ChangingTimes = true;
+            }
         }
 
         protected override void OnDisappearing()
