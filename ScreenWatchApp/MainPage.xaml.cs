@@ -1,24 +1,43 @@
-﻿namespace ScreenWatchApp
+﻿using System;
+using System.Timers;
+
+namespace ScreenWatchApp
 {
     public partial class MainPage : ContentPage
     {
-        int count = 0;
+        private System.Timers.Timer _timer;
 
         public MainPage()
         {
             InitializeComponent();
+            StartTimer();
         }
 
-        private void OnCounterClicked(object sender, EventArgs e)
+        private void StartTimer()
         {
-            count++;
+            _timer = new System.Timers.Timer(1000); // Обновлять каждую секунду
+            _timer.Elapsed += OnTimedEvent;
+            _timer.Start();
+        }
 
-            if (count == 1)
-                CounterBtn.Text = $"Clicked {count} time";
-            else
-                CounterBtn.Text = $"Clicked {count} times";
+        private void OnTimedEvent(object sender, ElapsedEventArgs e)
+        {
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                TimeLabel.Text = DateTime.Now.ToString("HH:mm:ss");
+            });
+        }
 
-            SemanticScreenReader.Announce(CounterBtn.Text);
+        private void OnUpdateTimeClicked(object sender, EventArgs e)
+        {
+            TimeLabel.Text = DateTime.Now.ToString("HH:mm:ss");
+        }
+
+        protected override void OnDisappearing()
+        {
+            base.OnDisappearing();
+            _timer?.Stop();
+            _timer?.Dispose();
         }
     }
 
