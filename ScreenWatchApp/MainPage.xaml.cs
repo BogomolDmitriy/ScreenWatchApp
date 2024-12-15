@@ -11,8 +11,23 @@ namespace ScreenWatchApp
         public MainPage()
         {
             InitializeComponent();
+            SetDynamicFontSize();
             StartTimer();
             _ChangingTimes = true;
+        }
+
+        private void SetDynamicFontSize()
+        {
+            // Получаем информацию об экране
+            var displayInfo = DeviceDisplay.MainDisplayInfo;
+
+            // Вычисляем размер шрифта на основе меньшей стороны экрана
+            double screenWidth = displayInfo.Width / displayInfo.Density; // В логических единицах (DIP)
+            double screenHeight = displayInfo.Height / displayInfo.Density; // В логических единицах (DIP)
+            double minDimension = Math.Min(screenWidth, screenHeight);
+
+            // Устанавливаем размер шрифта (примерно 50% от меньшей стороны)
+            TimeLabel.FontSize = minDimension * 0.5; // 50% от размера экрана
         }
 
         private void StartTimer()
