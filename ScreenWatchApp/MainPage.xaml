@@ -6,12 +6,53 @@
 
     <ScrollView>
         <VerticalStackLayout Padding="20" Spacing="10">
-            <Label x:Name ="TimeLabel"
+            <HorizontalStackLayout 
+                HorizontalOptions="Center"
+                VerticalOptions="CenterAndExpand">
+                <Label x:Name="Hour1"
+                       TextColor="DarkGreen"
+                       Text="00"
+                       FontSize="24"
+                       HorizontalOptions="Center"
+                       VerticalOptions="CenterAndExpand"/>
+                <Label x:Name="Hour2"
+                       TextColor="DarkGreen"
+                       Text="00"
+                       FontSize="24"
+                       HorizontalOptions="Center"
+                       VerticalOptions="CenterAndExpand"/>
+                <Label x:Name="Sim"
+                       TextColor="DarkGreen"
+                       Text=":"
+                       FontSize="24"
+                       HorizontalOptions="Center"
+                       VerticalOptions="CenterAndExpand"/>
+                <Label x:Name=" Minute1"
+                       TextColor="DarkGreen"
+                       Text="00"
+                       FontSize="24"
+                       HorizontalOptions="Center"
+                       VerticalOptions="CenterAndExpand"/>
+                <Label x:Name=" Minute2"
+                       TextColor="DarkGreen"
+                       Text="00"
+                       FontSize="24"
+                       HorizontalOptions="Center"
+                       VerticalOptions="CenterAndExpand"/>
+                <Label x:Name="Seconds"
+                       TextColor="DarkRed"
+                       Text="00"
+                       FontSize="24"
+                       HorizontalOptions="Center"
+                       VerticalOptions="End"/>
+
+            </HorizontalStackLayout>
+            <!--<Label x:Name ="TimeLabel"
                TextColor="DarkGreen"
                Text="00:00"
                FontSize="24"
                HorizontalOptions="Center"
-               VerticalOptions="CenterAndExpand" />
+               VerticalOptions="CenterAndExpand" />-->
         </VerticalStackLayout>
     </ScrollView>
 
