@@ -1,4 +1,6 @@
-﻿using System;
+﻿//using ScreenWatchApp.WinUI;
+using Microsoft.Maui.Controls.PlatformConfiguration;
+using System;
 using System.Timers;
 //using Windows.Networking.NetworkOperators;
 
@@ -8,14 +10,20 @@ namespace ScreenWatchApp
     {
         private int HourLim;
         private int MinuteLim;
+        private int screenRefreshTime = 500;
+
+        private int cauntRestartHour;
+
+        private bool intermediateBool;
 
         private DateTime startDate = new DateTime(2024, 12, 31);
         private DateTime endDate = new DateTime(2025 + 1, 01, 01);
 
         Random random = new Random();
 
-        //private System.Timers.Timer _timer;
-        private CancellationTokenSource _cts;
+        private System.Timers.Timer _timerT;
+        //private System.Timers.Timer _timerF;
+        //private CancellationTokenSource _cts;
         private bool _ChangingTimes;
 
         public MainPage()
@@ -26,6 +34,8 @@ namespace ScreenWatchApp
             _ChangingTimes = true;
             HourLim = 25;
             MinuteLim = 61;
+            intermediateBool = true;
+            cauntRestartHour = 0;
         }
 
         //private void NewYear()
@@ -53,80 +63,102 @@ namespace ScreenWatchApp
             Seconds.FontSize = minDimension * 0.25;
         }
 
-        //private void StartTimer()
-        //{
-        //    _timer = new System.Timers.Timer(1000); // Обновлять каждую секунду
-        //    _timer.Elapsed += OnTimedEvent;
-        //    _timer.Start();
-        //}
-
         private void StartTimer()
         {
-            _cts = new CancellationTokenSource();
-
-            Task.Run(async () =>
-            {
-                while (!_cts.IsCancellationRequested)
-                {
-                    try
-                    {
-                        // Обновление UI в основном потоке
-                        MainThread.BeginInvokeOnMainThread(() =>
-                        {
-                            UpdateTimes();
-                        });
-
-                        await Task.Delay(1000); // Задержка 1 секунда
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine($"Ошибка таймера: {ex.Message}");
-                        break;
-                    }
-                }
-            }, _cts.Token);
+            _timerT = new System.Timers.Timer(screenRefreshTime); // Обновлять каждую секунду
+            _timerT.Elapsed += OnTimedEvent;
+            _timerT.Start();
         }
 
-        //private void OnTimedEvent(object sender, ElapsedEventArgs e)
+        //private void StartTimer()
         //{
-        //    MainThread.BeginInvokeOnMainThread(() =>
+        //    _cts = new CancellationTokenSource();
+
+        //    Task.Run(async () =>
         //    {
-        //        UpdateTimes();
-        //    });
+        //        while (!_cts.IsCancellationRequested)
+        //        {
+        //            try
+        //            {
+        //                // Обновление UI в основном потоке
+        //                MainThread.BeginInvokeOnMainThread(() =>
+        //                {
+        //                    UpdateTimes();
+        //                });
+
+        //                await Task.Delay(500); // Задержка 0.5 секунды
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                Console.WriteLine($"Ошибка таймера: {ex.Message}");
+        //                break;
+        //            }
+        //        }
+        //    }, _cts.Token);
         //}
+
+        private void OnTimedEvent(object sender, ElapsedEventArgs e)
+        {
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                UpdateTimes();
+            });
+        }
 
         private void UpdateTimes()
         {
             DateTime now = DateTime.Now;
-            Seconds.Text = now.ToString("ss");
 
-            if (MinuteLim != now.Minute)
+            if (intermediateBool)
             {
-                string[] charactersMinute = now.ToString("mm").Select(c => c.ToString()).ToArray();
-                Minute1.Text = charactersMinute[0];
-                Minute2.Text = charactersMinute[1];
-                MinuteLim = now.Minute;
+                Seconds.Text = now.ToString("ss");
 
-                if (HourLim != now.Hour)
+                if (MinuteLim != now.Minute)
                 {
-                    string[] charactersHour = now.ToString("HH").Select(c => c.ToString()).ToArray();
-                    Hour1.Text = charactersHour[0];
-                    Hour2.Text = charactersHour[1];
-                    HourLim = now.Hour;
-                }
-            }
+                    string[] charactersMinute = now.ToString("mm").Select(c => c.ToString()).ToArray();
+                    Minute1.Text = charactersMinute[0];
+                    Minute2.Text = charactersMinute[1];
+                    MinuteLim = now.Minute;
 
-            if (_ChangingTimes)
-            {
-                Sim.TextColor = Colors.Black;
-                _ChangingTimes = false;
+
+                    if (HourLim != now.Hour)
+                    {
+                        string[] charactersHour = now.ToString("HH").Select(c => c.ToString()).ToArray();
+                        Hour1.Text = charactersHour[0];
+                        Hour2.Text = charactersHour[1];
+                        HourLim = now.Hour;
+                        TimerVariable();
+
+                        cauntRestartHour++;
+
+                        if (cauntRestartHour >= 3)
+                        {
+                            Restart();
+                        }
+
+                    }
+                }
+
+                if (_ChangingTimes)
+                {
+                    Sim.TextColor = Colors.Black;
+                    _ChangingTimes = false;
+                }
+
+                else
+                {
+                    Sim.TextColor = Colors.DarkGreen;
+                    _ChangingTimes = true;
+                }
+
+                intermediateBool = false;
             }
 
             else
             {
-                Sim.TextColor = Colors.DarkGreen;
-                _ChangingTimes = true;
+                intermediateBool = true;
             }
+
 
             if (now.Date >= startDate.Date && now.Date <= endDate.Date)
             {
@@ -147,19 +179,40 @@ namespace ScreenWatchApp
 
         public Color RandColor()
         {
-            byte red = (byte)random.Next(0, 256);
-            byte green = (byte)random.Next(0, 256);
-            byte blue = (byte)random.Next(0, 256);
+            byte red = (byte)random.Next(100,255);
+            byte green = (byte)random.Next(150,255);
+            byte blue = (byte)random.Next(0, 150);
 
             return Color.FromRgb(red, green, blue);
         }
 
-        //protected override void OnDisappearing()
-        //{
-        //    base.OnDisappearing();
-        //    _timer?.Stop();
-        //    _timer?.Dispose();
-        //}
-    }
+        protected override void OnDisappearing()
+        {
+            StopTimer();
+        }
 
+        private void TimerVariable()
+        {
+            StopTimer();
+            StartTimer();
+        }
+
+        private void StopTimer()
+        {
+            base.OnDisappearing();
+            _timerT?.Stop();
+            _timerT?.Dispose();
+        }
+
+        private void Restart()
+        {
+            if (Application.Current is App app)
+            {
+                app.RestartApp();
+            }
+
+            cauntRestartHour = 0;
+        }
+
+    }
 }

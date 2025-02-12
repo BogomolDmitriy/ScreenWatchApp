@@ -21,5 +21,14 @@ namespace ScreenWatchApp
                 SystemUiFlags.HideNavigation |
                 SystemUiFlags.Fullscreen);
         }
+
+        //public void RestartApp()
+        //{
+        //    var context = Platform.CurrentActivity;
+        //    var intent = context.PackageManager.GetLaunchIntentForPackage(context.PackageName);
+        //    intent.AddFlags(Android.Content.ActivityFlags.ClearTop);
+        //    context.StartActivity(intent);
+        //    Android.OS.Process.KillProcess(Android.OS.Process.MyPid());
+        //}
     }
 }

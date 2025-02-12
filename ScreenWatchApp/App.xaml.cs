@@ -8,5 +8,11 @@
 
             MainPage = new AppShell();
         }
+
+        public void RestartApp()
+        {
+            // Перезавантаження головної сторінки
+            MainPage = new MainPage();
+        }
     }
 }
